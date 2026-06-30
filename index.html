@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Investment Platform - Modular</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="intro-overlay">
+        <h1 class="intro-title">Quantum Investment</h1>
+        <p class="intro-desc">마우스를 움직여 플랫폼에 진입하세요.</p>
+    </div>
+
+    <div id="main-content">
+        
+        <header>
+            <div class="header-top">
+                <div class="logo">📊 QUANTUM INVEST</div>
+                <div id="current-time"></div>
+            </div>
+            
+            <div class="nav-menu">
+                <button class="nav-item active" data-page="pages/dashboard.html" onclick="switchPage(this)">대시보드</button>
+                <button class="nav-item" data-page="pages/macro.html" onclick="switchPage(this)">경제 분석실</button>
+                <button class="nav-item" data-page="pages/analysis.html" onclick="switchPage(this)">종목 가치 분석</button>
+                <button class="nav-item" data-page="pages/portfolio.html" onclick="switchPage(this)">마이 포트폴리오</button>
+            </div>
+
+            <div class="news-ticker">
+                <div class="news-track">
+                    <span>🔥 [시황] 미 연준 금리 동결 시사, 뉴욕증시 일제히 상승 마감</span>
+                    <span>💸 [환율] 달러-원 환율 변동성 확대, 현재 1,350원선 공방</span>
+                    <span>🛢️ [국제유가] WTI 중동 리스크 완화에 2% 하락세 전환</span>
+                    <span>🪙 [비트코인] 기관 매수세 유입으로 전일 대비 3% 반등 성공</span>
+                </div>
+            </div>
+        </header>
+
+        <main id="content-viewport" class="page-view-container">
+            </main>
+
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<div class="card">
+    <div class="card-title">💼 내 실시간 자산 구성 및 실적 원장</div>
+    
+    <div class="asset-summary-board">
+        <div class="summary-card">
+            <h4>총 투자 원금</h4>
+            <p id="total-invest-val" style="color: #c9d1d9;">0 원</p>
+        </div>
+        <div class="summary-card">
+            <h4>총 자산 평가액</h4>
+            <p id="total-eval-val" style="color: #58a6ff;">0 원</p>
+        </div>
+        <div class="summary-card">
+            <h4>총 누적 수익률</h4>
+            <p id="total-return-val" style="color: #f85149;">0.00%</p>
+        </div>
+    </div>
+
+    <div class="portfolio-form">
+        <div class="input-group">
+            <label>종목명 / 자산명</label>
+            <input type="text" id="pf-name" placeholder="예: 삼성전자">
+        </div>
+        <div class="input-group">
+            <label>매수 평단가 (원/$)</label>
+            <input type="number" id="pf-price" placeholder="예: 72000">
+        </div>
+        <div class="input-group">
+            <label>보유 수량</label>
+            <input type="number" id="pf-quantity" placeholder="예: 10">
+        </div>
+        <button onclick="addPortfolioItem()">보유 종목 추가</button>
+    </div>
+
+    <table class="result-table">
+        <thead>
+            <tr>
+                <th>자산명</th>
+                <th>매수 평단가</th>
+                <th>보유 수량</th>
+                <th>투자 원금</th>
+                <th>자산 비중</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody id="portfolio-table-body"></tbody>
+    </table>
+</div>

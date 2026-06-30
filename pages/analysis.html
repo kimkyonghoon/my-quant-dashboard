@@ -1,0 +1,40 @@
+<div class="tool-split">
+    <div class="card">
+        <div class="card-title">📈 피보나치 조정대 계산기 (기술적 분석)</div>
+        <div class="input-group">
+            <label for="high-price">최근 최고가 (High Price)</label>
+            <input type="number" id="high-price" value="100000" oninput="calculateFibonacci()">
+        </div>
+        <div class="input-group">
+            <label for="low-price">최근 최저가 (Low Price)</label>
+            <input type="number" id="low-price" value="50000" oninput="calculateFibonacci()">
+        </div>
+        <table class="result-table">
+            <thead><tr><th>되돌림 비율</th><th>예상 지지/저항가</th></tr></thead>
+            <tbody>
+                <tr><td>0.0% (최고점)</td><td id="fib-0" class="result-value">-</td></tr>
+                <tr><td>23.6% 되돌림</td><td id="fib-236" class="result-value">-</td></tr>
+                <tr><td>38.2% 되돌림</td><td id="fib-382" class="result-value">-</td></tr>
+                <tr><td>50.0% (중간점)</td><td id="fib-50" class="result-value">-</td></tr>
+                <tr><td>61.8% (황금비)</td><td id="fib-618" class="result-value">-</td></tr>
+                <tr><td>100.0% (최저점)</td><td id="fib-100" class="result-value">-</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-title">💎 그레이엄 가치 평가 모델 (기본적 분석)</div>
+        <div class="input-group">
+            <label for="stock-eps">당기순이익 (EPS)</label>
+            <input type="number" id="stock-eps" value="5000" oninput="calculateValue()">
+        </div>
+        <div class="input-group">
+            <label for="stock-bps">주당순자산 (BPS)</label>
+            <input type="number" id="stock-bps" value="45000" oninput="calculateValue()">
+        </div>
+        <div style="margin-top: 30px; padding: 20px; background-color: #090d16; border-radius: 6px; text-align: center;">
+            <span style="color: #8b949e; font-size: 0.9rem;">그레이엄 수식 기반 적정주가</span>
+            <h2 id="graham-result" style="color: #58a6ff; font-size: 2rem; margin-top: 10px;">- 원</h2>
+        </div>
+    </div>
+</div>
