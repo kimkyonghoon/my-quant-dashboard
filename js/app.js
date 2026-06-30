@@ -30,7 +30,7 @@ function transitionToMain() {
             switchPage(defaultTab);
         }, 1000); // CSS 애니메이션 시간(1s)만큼 대기
 
-    }, 3000); // 💡 이 부분을 바꾸면 대기 시간을 조절할 수 있습니다 (3000 = 3초)
+    }, 5000); // 💡 이 부분을 바꾸면 대기 시간을 조절할 수 있습니다 (3000 = 3초)
 }
 
 window.addEventListener('mousemove', transitionToMain);
@@ -50,27 +50,43 @@ const ichingDatabase = [
     { name: "제30괘: 이위화 (離爲火) - 화려", gua: "☲ ☲", desc: "불길이 타오르듯 화려한 장세입니다. 기술주나 급등 테마주가 주도할 가능성이 크며, 빠른 손절 기준을 잡고 단기 진입하기 좋습니다." }
 ];
 
-// 1. 인트로 화면 제어 및 첫 대시보드 로드
+// js/app.js 파일 상단의 인트로 제어 부분을 이 코드로 교정하세요.
+
+let isTransitioned = false;
+
 function transitionToMain() {
     if (isTransitioned) return;
-    isTransitioned = true;
+    isTransitioned = true; // 이벤트가 중복 실행되지 않도록 즉시 잠금
 
-    const introOverlay = document.getElementById('intro-overlay');
-    introOverlay.style.opacity = '0';
-    introOverlay.style.transform = 'translateY(-100vh)'; 
-    document.body.classList.add('loaded');
+    // 1. 인트로 안내 문구를 변경하여 사용자에게 대기 유도 (선택 사항)
+    const introDesc = document.querySelector('.intro-desc');
+    if (introDesc) {
+        introDesc.innerText = "플랫폼을 초기화하는 중입니다... (3초)";
+        introDesc.style.animation = "pulse 0.5s infinite"; // 깜빡임 속도 올려서 구동 느낌 연출
+    }
 
+    // 2. ⏳ 3000밀리초(3초) 후에 메인 화면 전환 로직 실행
     setTimeout(() => {
-        introOverlay.style.display = 'none';
-        // 첫 진입 시 '대시보드' 페이지 자동 로드
-        const defaultTab = document.querySelector('.nav-item');
-        switchPage(defaultTab);
-    }, 1000);
+        const introOverlay = document.getElementById('intro-overlay');
+        
+        // 부드럽게 사라지는 효과 시작 (CSS transition 1초 가동)
+        introOverlay.style.opacity = '0';
+        introOverlay.style.transform = 'translateY(-100vh)'; 
+        document.body.classList.add('loaded');
+
+        // 완전히 안 보이기 해주는 투명화 마무리 타이머
+        setTimeout(() => {
+            introOverlay.style.display = 'none';
+            // 첫 진입 시 '대시보드' 페이지 자동 로드
+            const defaultTab = document.querySelector('.nav-item');
+            switchPage(defaultTab);
+        }, 1000); // CSS 애니메이션 시간(1s)만큼 대기
+
+    }, 3000); // 💡 이 부분을 바꾸면 대기 시간을 조절할 수 있습니다 (3000 = 3초)
 }
 
 window.addEventListener('mousemove', transitionToMain);
 window.addEventListener('touchstart', transitionToMain);
-
 // 2. 실시간 시계 기능
 function updateClock() {
     const now = new Date();
