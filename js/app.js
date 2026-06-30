@@ -273,3 +273,58 @@ function renderPortfolio() {
     document.getElementById('total-eval-val').innerText = Math.round(totalInvest * 1.054).toLocaleString() + " 원";
     document.getElementById('total-return-val').innerText = totalInvest > 0 ? "5.40% ▲" : "0.00%";
 }
+
+// ==========================================
+// 💡 [신규 추가] 실시간 반도체/삼성/하이닉스 뉴스 RSS API 연동
+// ==========================================
+
+// 1. 뉴스 데이터 가져오기 핵심 함수
+async function fetchLiveNews() {
+    const newsTrack = document.getElementById('live-news-track');
+    if (!newsTrack) return;
+
+    try {
+        // 구글 뉴스 RSS 피드에서 '삼성전자 SK하이닉스 반도체' 키워드로 뉴스 탐색 후 JSON으로 변환해주는 무료 파이프라인 활용
+        const query = encodeURIComponent('삼성전자 "SK하이닉스" 반도체');
+        const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=ko&gl=KR&ceid=KR:ko`;
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("뉴스 API 통신 실패");
+        
+        const data = await response.json();
+
+        if (data.status === 'ok' && data.items.length > 0) {
+            // 최대 15개까지만 자르기
+            const topNews = data.items.slice(0, 15);
+            
+            // 기존 로딩 메시지 삭제 후 데이터 조립
+            newsTrack.innerHTML = '';
+            
+            topNews.forEach(item => {
+                const span = document.createElement('span');
+                // 이모지는 인공지능 스타일로 랜덤 배정하여 전광판 느낌 연출
+                const icons = ['📰', '🚀', '💡', '🔥', '📊'];
+                const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+                
+                // 뉴스 제목만 전광판에 노출 (출처 언론사 표시 포함)
+                span.innerText = `${randomIcon} ${item.title}   `;
+                newsTrack.appendChild(span);
+            });
+
+            // 뉴스 목록 개수에 맞게 롤링 애니메이션 속도(초)를 동적으로 최적화 (글이 길어지면 느리게 처리)
+            newsTrack.style.animationDuration = `${topNews.length * 8}s`;
+        } else {
+            newsTrack.innerHTML = '<span>⚠️ 최신 반도체 뉴스를 찾을 수 없습니다.</span>';
+        }
+    } catch (error) {
+        console.error("뉴스 로드 오류:", error);
+        newsTrack.innerHTML = '<span>⚠️ 실시간 금융 뉴스 서버 연결 지연 중...</span>';
+    }
+}
+
+// 2. 1시간 간격(3600000ms) 자동 갱신 타이머 작동 스케줄러
+function startNewsTimer() {
+    fetchLiveNews(); // 브라우저가 켜질 때 즉시 1회 실행
+    setInterval(fetchLiveNews, 3600000); // 정확히 1시간(3,600,000밀리초) 마다 배경에서 재호출
+}
