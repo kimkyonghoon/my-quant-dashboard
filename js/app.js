@@ -45,6 +45,7 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // 3. 💡 비동기 파일 로드 및 탭 전환 핵심 로직 (AJAX Fetch 기법)
+// js/app.js 내의 switchPage 함수를 이 코드로 교정해 주세요!
 async function switchPage(element) {
     if (!element) return;
     
@@ -53,13 +54,24 @@ async function switchPage(element) {
     navItems.forEach(item => item.classList.remove('active'));
     element.classList.add('active');
 
-    const pageUrl = element.getAttribute('data-page');
+    // 💡 핵심 교정: 경로 앞에 ./를 붙여 현재 디렉토리 기준으로 탐색 강제
+    let pageUrl = element.getAttribute('data-page');
+    if (!pageUrl.startsWith('./') && !pageUrl.startsWith('http')) {
+        pageUrl = './' + pageUrl;
+    }
+
     const viewport = document.getElementById('content-viewport');
 
     try {
         // 비동기로 하위 HTML 조각 파일 요청하여 본문에 바인딩
         const response = await fetch(pageUrl);
-        const htmlContent = await response.json ? await response.json() : await response.text();
+        
+        // 💡 GitHub 404 에러나 연결 실패를 잡아내기 위한 안전장치 추가
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const htmlContent = await response.text();
         viewport.innerHTML = htmlContent;
 
         // 파일 렌더링 직후 각 서브 페이지용 특수 데이터 초기화 함수 호출 트리거
@@ -67,10 +79,14 @@ async function switchPage(element) {
 
     } catch (error) {
         console.error("페이지 로드 실패:", error);
-        viewport.innerHTML = `<div class="card"><p style="color:#f85149;">페이지 로드 중 에러가 발생했습니다.</p></div>`;
+        viewport.innerHTML = `
+            <div class="card" style="border-color: #f85149;">
+                <p style="color:#f85149; font-weight: bold;">⚠️ 페이지 로드 중 에러가 발생했습니다.</p>
+                <p style="color:#8b949e; font-size:0.85rem; margin-top:5px;">원인: ${error.message}</p>
+                <p style="color:#8b949e; font-size:0.85rem;">요청 경로: ${pageUrl}</p>
+            </div>`;
     }
 }
-
 // 4. 서브 페이지 전용 내부 연동 함수 바인더
 function initPageFunctions(url) {
     if (url.includes('dashboard.html')) {
