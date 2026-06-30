@@ -10,14 +10,77 @@ let portfolioItems = [
     { name: "비트코인(BTC)", price: 92000000, quantity: 0.5 }
 ];
 
-// 주역 데이터베이스
-const ichingDatabase = [
-    { name: "제1괘: 건위천 (乾爲天) - 대길", gua: "☰ ☰", desc: "용이 하늘을 나는 강력한 상승의 형국입니다. 시장의 에너지가 매수세로 가득 차 있습니다. 탐욕을 버리고 익절 구간을 고민할 때입니다." },
-    { name: "제2괘: 곤위지 (坤爲地) - 순응", gua: "☷ ☷", desc: "넓은 대지처럼 유순한 장세입니다. 억지로 추격 매수하기보다는 시장의 흐름에 순응하며 현금을 확보하고 관망하는 것이 유리합니다." },
-    { name: "제29괘: 감위수 (坎爲水) - 험난", gua: "☵ ☵", desc: "물속에 또 물이 빠진 격으로 함정이 도사리고 있습니다. 악재가 겹칠 수 있으니 리스크 관리에 만전을 기하고 소나기는 피해 가야 합니다." },
-    { name: "제30괘: 이위화 (離爲火) - 화려", gua: "☲ ☲", desc: "불길이 타오르듯 화려한 장세입니다. 기술주나 급등 테마주가 주도할 가능성이 크며, 빠른 손절 기준을 잡고 단기 진입하기 좋습니다." }
-];
+// ==========================================
+// ☯️ [업그레이드] 정통 주역 계산 및 투자 격언 연동 시스템
+// ==========================================
 
+// 1. 64괘 매칭 라이브러리 데이터베이스 (위 데이터베이스를 확장 수용)
+const ichingQuantDatabase = {
+    1: { name: "건위천 (乾爲天) - 중천건", gua: "☰ ☰", type: "대길(大吉)", desc: "강력한 상승 에너지. 모든 이평선이 정배열된 호황기입니다.", proverb: "남들이 탐욕을 부릴 때 두려워하고, 남들이 두려워할 때 탐욕을 부려라.", author: "워렌 버핏", action: "수익을 즐기되, 과열 신호를 감지하고 점진적 분할매도를 준비하세요." },
+    2: { name: "곤위지 (坤爲地) - 중지곤", gua: "☷ ☷", type: "순응(順應)", desc: "대지처럼 넓고 고요한 보합 장세. 소나기를 피하고 에너지를 모으는 시기입니다.", proverb: "시장의 흐름에 맞서지 마라. 추세는 당신의 친구다.", author: "마틴 슈바르츠", action: "무리한 추격 매수를 금하고 현금 비중을 확보하며 관망하세요." },
+    11: { name: "지천태 (地天泰) - 태평", gua: "☷ ☰", type: "안정(安定)", desc: "하늘과 땅이 소통하는 태평성대. 우량 가치주들이 제 자리를 찾아갑니다.", proverb: "가치 투자란 1달러짜리 자산을 50센트에 사는 것이다.", author: "벤자민 그레이엄", action: "적정 가치 이하로 떨어진 우량 종목을 매수하여 장기 보유하기 좋습니다." },
+    12: { name: "천지비 (天地否) - 폐색", gua: "☰ ☷", type: "침체(沈滯)", desc: "하늘과 땅이 멀어지는 불통의 하락장. 악재 유입 가능성이 높습니다.", proverb: "하락장에서는 아무것도 하지 않는 것이 버는 것이다.", author: "제시 리버모어", action: "신용 자산을 정리하고 포트폴리오의 하방 경직성을 확보하세요." },
+    29: { name: "감위수 (坎爲水) - 중수감", gua: "☵ ☵", type: "위험(危險)", desc: "함정이 연속되는 형국. 패닉셀과 마진콜이 겹치는 투매 장세입니다.", proverb: "떨어지는 칼날을 잡지 마라.", author: "월가 명언", action: "물타기는 금물입니다. 시장이 완전히 바닥을 다진 후 진입하세요." },
+    30: { name: "이위화 (離爲火) - 중화이", gua: "☲ ☲", type: "과열(過熱)", desc: "불길이 화려하게 타오르는 형상. 밈 주식 및 테마주 쏠림 과열 장세입니다.", proverb: "거품은 그것이 터지기 전까지는 거품인지 알 수 없다.", author: "앨런 그린스펀", action: "수익 변동성이 큽니다. 방망이를 짧게 잡고 철저한 스톱로스(Stop-loss)를 적용하세요." },
+    63: { name: "수화기제 (水火旣濟) - 완수", gua: "☵ ☲", type: "만개(滿開)", desc: "모든 조건이 달성된 상태. 축제의 끝이자 상투(최고점) 징후일 수 있습니다.", proverb: "밀물이 들어오면 모든 배가 뜨지만, 썰물이 되면 누가 벌거벗고 수영했는지 알 수 있다.", author: "워렌 버핏", action: "현재 포워드 리스크를 점검하고 자산 배분 비중을 현금 위주로 리밸런싱하세요." },
+    64: { name: "화수미제 (火水未濟) - 미완", gua: "☲ ☵", type: "반전(反轉)", desc: "아직 미완성이나 하락의 끝에서 새로운 상승 추세 전환을 준비하는 장세입니다.", proverb: "가장 어두운 밤이 지나면 새벽이 온다.", author: "존 템플턴", action: "공포에 매수할 타이밍입니다. 우량 혁신 기업들을 분할 매수로 바구니에 담으세요." }
+};
+
+// 2. 1971년 3월 3일 06시 생 기준 주역 64괘 연산 엔진
+function generateTodayGua() {
+    // [선천수 분석] 1971년(돼지해 = 12), 3월(3), 3일(3), 06시(묘시 = 4)
+    const birthYearZodiac = 12; // 亥 (돼지)
+    const birthMonth = 3;
+    const birthDay = 3;
+    const birthHour = 4;        // 卯 (묘시: 05~07시)
+
+    // [후천수 분석] 오늘 날짜 대입 (2026년 6월 30일)
+    const today = new Date();
+    const currentYear = today.getFullYear(); // 2026
+    const currentMonth = today.getMonth() + 1; // 6
+    const currentDay = today.getDate(); // 30
+
+    // 하괘(내괘) 연산 = (선천수 합산) % 8
+    let lowerSum = birthYearZodiac + birthMonth + birthDay + birthHour;
+    let lowerGua = lowerSum % 8;
+    if (lowerGua === 0) lowerGua = 8;
+
+    // 상괘(외괘) 연산 = (하괘 기초수 + 오늘 일자 합산) % 8
+    let upperSum = lowerSum + currentYear + currentMonth + currentDay;
+    let upperGua = upperSum % 8;
+    if (upperGua === 0) upperGua = 8;
+
+    // 64괘 인덱스 변환 유도 매트릭스 알고리즘
+    // 대시보드 연동을 위해 발췌된 주요 8개 리스크 괘 조합 스케줄러 보정
+    const guaMatrix = [1, 2, 11, 12, 29, 30, 63, 64];
+    // 날짜 조합 연산에 따라 매일 동적으로 8개 핵심 마켓 점괘 중 하나를 도출
+    const finalGuaIndex = guaMatrix[(upperGua + lowerGua) % guaMatrix.length];
+    
+    const resultGua = ichingQuantDatabase[finalGuaIndex];
+
+    // 3. UI 컴포넌트 실시간 바인딩 바인더
+    const nameEl = document.getElementById('iching-name');
+    const guaEl = document.getElementById('iching-gua');
+    const descEl = document.getElementById('iching-desc');
+    const proverbEl = document.querySelector('.proverb-box'); // 대시보드 격언 박스 동시 타겟팅
+
+    if (nameEl && guaEl && descEl) {
+        nameEl.innerHTML = `<span style="color: #58a6ff;">${resultGua.name}</span> <span style="font-size:0.8rem; background:#21262d; padding:2px 6px; border-radius:4px; margin-left:5px;">${resultGua.type}</span>`;
+        guaEl.innerText = resultGua.gua;
+        descEl.innerHTML = `
+            <strong>시장 상황:</strong> ${resultGua.desc}<br>
+            <strong style="color:#58a6ff;">오늘의 권고 액션:</strong> ${resultGua.action}
+        `;
+    }
+
+    // 대시보드의 투자 격언 코너도 오늘 계산된 주역 격언과 싱크로율 100% 동기화
+    if (proverbEl) {
+        proverbEl.innerHTML = `
+            "${resultGua.proverb}"<br>
+            <span style="font-size: 0.8rem; color: #8b949e;">- ${resultGua.author} -</span>
+        `;
+    }
+}
 
 // ==========================================
 // ⏳ 2. 인트로 화면 제어 및 메인 전환 (5초 타이머 통합)
